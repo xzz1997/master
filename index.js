@@ -66,26 +66,42 @@ async function loadNews(force) {
 }
 
 /* ---- 今日壁纸 ---- */
+const WP_PLACEHOLDER = 'linear-gradient(120deg,#1c2440,#3a2c54 50%,#4a2c6e)';
 async function loadWallpaper(force) {
   const img = document.getElementById('wpImg');
   const t = document.getElementById('wpTitle');
   const c = document.getElementById('wpCopy');
   img.className = 'wp-img skel';
-  let d;
+  let d = null, fromCache = false;
   try { d = await api('/bing', { ttl: 'bing', force }); }
-  catch { d = { title: '今日壁纸（示例）', headline: '数据源不可用时显示示例占位图', copyright: '© 60s API' }; }
-  t.textContent = d.title || d.headline || '';
+  catch {
+    try { const cached = JSON.parse(localStorage.getItem('60s_wallpaper_cache') || 'null'); if (cached && cached.cover) { d = cached; fromCache = true; } } catch {}
+  }
+  if (!d) {
+    // 接口不可用且无缓存：显示渐变占位图（不卡骨架屏）
+    t.textContent = '今日壁纸';
+    c.textContent = '接口暂不可用，稍后重试即可';
+    img.className = 'wp-img';
+    img.style.background = WP_PLACEHOLDER;
+    img.removeAttribute('src');
+    return;
+  }
+  // 成功：写入缓存，下次接口挂了也能显示
+  try { localStorage.setItem('60s_wallpaper_cache', JSON.stringify({ title: d.title || d.headline || '', copyright: d.copyright || '', cover: d.cover || d.image || d.cover_4k || '' })); } catch {}
+  t.textContent = (d.title || d.headline || '今日壁纸') + (fromCache ? '（缓存）' : '');
   c.textContent = d.copyright || '';
   const src = d.cover || d.image || d.cover_4k || '';
   if (src) {
     const probe = new Image();
-    probe.onload = () => { img.src = src; img.className = 'wp-img'; };
-    probe.onerror = () => { img.className = 'wp-img'; img.style.background = 'linear-gradient(120deg,#1c2440,#3a2c54)'; };
+    probe.onload = () => { img.src = src; img.className = 'wp-img'; img.style.background = ''; };
+    probe.onerror = () => { img.className = 'wp-img'; img.style.background = WP_PLACEHOLDER; img.removeAttribute('src'); };
     probe.src = src;
     img.alt = t.textContent;
+  } else {
+    img.className = 'wp-img';
+    img.style.background = WP_PLACEHOLDER;
   }
 }
-
 /* ---- 热搜榜单（含网易云子榜单） ---- */
 const RANK_TABS = [
   { id: 'weibo', name: '微博', path: '/weibo', label: '热搜' },
