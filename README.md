@@ -25,8 +25,7 @@
 
 ## 🚀 在线预览
 
-<!-- 部署完成后，把链接替换成你自己的地址 -->
-**https://你的用户名.github.io/60s-entertainment/**
+**https://xzz1997.github.io/master/**
 
 ---
 
@@ -65,14 +64,14 @@ npx serve .
 ### 第 1 步：创建仓库并推送
 
 ```bash
-# 在 GitHub 网页上新建一个仓库（例如取名 60s-entertainment，公开仓库）
+# 在 GitHub 网页上新建一个仓库（例如取名 master，公开仓库）
 # 然后在本地执行：
 cd entertainment-site
 git init
 git add .
 git commit -m "🎣 摸鱼快乐屋 v1.0"
 git branch -M main
-git remote add origin https://github.com/你的用户名/60s-entertainment.git
+git remote add origin https://github.com/xzz1997/master.git
 git push -u origin main
 ```
 
@@ -97,7 +96,7 @@ git push -u origin main
 ### 第 4 步：访问
 
 ```
-https://你的用户名.github.io/60s-entertainment/
+https://xzz1997.github.io/master/
 ```
 
 > 💡 把该链接填到本文件上方「🚀 在线预览」处，README 就更完整啦。
@@ -112,7 +111,7 @@ https://你的用户名.github.io/60s-entertainment/
 
 ### Vercel（连接 GitHub 自动部署）
 1. 打开 <https://vercel.com> 并用 GitHub 登录
-2. **New Project** → Import 你的 `60s-entertainment` 仓库
+2. **New Project** → Import 你的 `master` 仓库
 3. Framework Preset 选 **Other**，直接 Deploy
 4. 之后每次 push 到 main 都会自动更新
 
