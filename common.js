@@ -196,7 +196,10 @@ function initWelcome() {
   // 每天只弹一次：当天已弹过则不再弹出（含页面切换/刷新）
   const now = new Date();
   const todayKey = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
-  try { if (localStorage.getItem('60s_welcome_date') === todayKey) return; } catch {}
+  try {
+    if (localStorage.getItem('60s_welcome_date') === todayKey) return;
+    if (localStorage.getItem('60s_welcome_muted') === todayKey) return; // 勾选过「今日不再提示」
+  } catch {}
   const markShown = () => { try { localStorage.setItem('60s_welcome_date', todayKey); } catch {} };
   const render = async (force) => {
     let luck, hitokoto;
@@ -209,6 +212,8 @@ function initWelcome() {
     document.getElementById('whText').textContent = hitokoto.hitokoto || hitokoto.text || hitokoto.content || '…';
   };
   const close = () => {
+    const mute = document.getElementById('welcomeMute');
+    if (mute && mute.checked) { try { localStorage.setItem('60s_welcome_muted', todayKey); } catch {} }
     markShown();
     overlay.classList.remove('show');
     setTimeout(() => overlay.remove(), 600);

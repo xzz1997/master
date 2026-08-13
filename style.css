@@ -264,3 +264,8 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px;min-width:480px}
 .welcome-actions{display:flex;gap:12px;justify-content:center;margin-top:26px}
 .welcome-actions .btn{flex:1;padding:12px 0;font-size:14.5px}
 @media(max-width:560px){.welcome-card{padding:30px 22px 24px}.welcome-title{font-size:21px}}
+
+/* 弹窗"今日不再提示"勾选框 */
+.welcome-mute{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:18px;font-size:13px;color:var(--text-3);cursor:pointer;user-select:none;transition:color .2s}
+.welcome-mute:hover{color:var(--text-2)}
+.welcome-mute input{width:16px;height:16px;accent-color:var(--accent-2);cursor:pointer;flex-shrink:0}
