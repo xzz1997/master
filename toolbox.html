@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>摸鱼快乐屋 · 工具箱</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<div class="aurora"><div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div></div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="logo">🎣 摸鱼快乐屋</div>
+    <div class="nav-links">
+      <a href="index.html">🏠 首页</a>
+      <a href="toolbox.html" class="active">🧰 工具箱</a>
+      <a href="index.html#rank">热搜榜单</a>
+      <a href="index.html#ent">娱乐百宝箱</a>
+    </div>
+    <div class="nav-right">
+      <span class="badge">LIVE · 60s API</span>
+      <span class="clock" id="clock">--:--:--</span>
+      <button class="theme-btn" id="themeBtn" title="切换主题">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="tool-hero">
+    <h1>🧰 打工人工具箱</h1>
+    <p>金价 · 天气 · 翻译 · 汇率，实用小工具一站配齐，摸鱼也要优雅。</p>
+  </header>
+
+  <div class="tool-grid">
+
+    <!-- 金价 -->
+    <div class="card tool-card reveal">
+      <div class="tool-head">
+        <div class="tool-icon">🥇</div>
+        <div>
+          <div class="tool-title">今日金价</div>
+          <div class="tool-desc">贵金属 · 品牌金店 · 银行金条 · 回收价</div>
+        </div>
+      </div>
+      <div id="goldMetals"></div>
+      <div class="table-wrap" style="margin-top:12px">
+        <table class="tbl"><thead><tr><th>品牌</th><th>品类</th><th>价格</th><th>单位</th></tr></thead><tbody id="goldStores"></tbody></table>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
+        <div class="table-wrap"><table class="tbl"><thead><tr><th>银行金条</th><th>价格</th></tr></thead><tbody id="goldBanks"></tbody></table></div>
+        <div class="table-wrap"><table class="tbl"><thead><tr><th>回收价</th><th>价格</th></tr></thead><tbody id="goldRecycle"></tbody></table></div>
+      </div>
+      <div class="ent-foot" style="margin-top:12px">
+        <button class="btn ghost" onclick="loadGold(true)">🔄 刷新金价</button>
+        <span id="goldMeta" style="font-size:12px;color:var(--text-3)"></span>
+      </div>
+    </div>
+
+    <!-- 天气 -->
+    <div class="card tool-card reveal">
+      <div class="tool-head">
+        <div class="tool-icon">🌤️</div>
+        <div>
+          <div class="tool-title">实时天气</div>
+          <div class="tool-desc">天气 · 空气 · 日出日落 · 生活指数 · 预警</div>
+        </div>
+      </div>
+      <div class="tool-input">
+        <input class="input" id="cityInput" placeholder="输入城市名，如：北京" value="北京">
+        <button class="btn" onclick="doWeather()">查询</button>
+      </div>
+      <div class="chip-row" id="cityChips" style="margin-top:10px"></div>
+      <div id="weatherBox" style="margin-top:16px"></div>
+    </div>
+
+    <!-- 翻译 -->
+    <div class="card tool-card reveal">
+      <div class="tool-head">
+        <div class="tool-icon">🌐</div>
+        <div>
+          <div class="tool-title">在线翻译</div>
+          <div class="tool-desc">109 种语言 · 自动检测 · 带音标</div>
+        </div>
+      </div>
+      <textarea class="input" id="fyText" placeholder="输入要翻译的文字…">Hello world, have a nice day!</textarea>
+      <div class="tool-input">
+        <select class="select" id="fyFrom"></select>
+        <button class="btn ghost" id="fySwap" title="交换语言">⇄</button>
+        <select class="select" id="fyTo"></select>
+        <button class="btn" onclick="doFanyi()">翻译</button>
+      </div>
+      <div id="fyResult"></div>
+    </div>
+
+    <!-- 汇率 -->
+    <div class="card tool-card reveal">
+      <div class="tool-head">
+        <div class="tool-icon">💱</div>
+        <div>
+          <div class="tool-title">实时汇率</div>
+          <div class="tool-desc">以人民币 CNY 为基准 · 百余种货币</div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="tbl"><thead><tr><th>货币</th><th>名称</th><th>汇率(兑 1 CNY)</th></tr></thead><tbody id="fxTable"></tbody></table>
+      </div>
+      <div class="ent-foot" style="margin-top:12px">
+        <button class="btn ghost" onclick="loadExchange(true)">🔄 刷新汇率</button>
+        <span id="fxMeta" style="font-size:12px;color:var(--text-3)"></span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<button class="music-fab" id="musicFab" title="网易云音乐">🎵</button>
+<div class="music-panel" id="musicPanel">
+  <div class="music-title">🎵 摸鱼 BGM</div>
+  <div class="music-sub">网易云外链播放器 · 点击歌曲即播放</div>
+  <iframe class="music-frame" src="about:blank" allow="autoplay"></iframe>
+  <div class="music-list"></div>
+</div>
+
+<button class="to-top" id="toTop" title="回到顶部">↑</button>
+
+<footer>
+  <div>🎣 摸鱼快乐屋 · 娱乐内容聚合站</div>
+  <div>数据来源：<a href="https://60s.viki.moe" target="_blank" rel="noopener">60s API</a>（免费开源 · <a href="https://github.com/vikiboss/60s" target="_blank" rel="noopener">GitHub</a>）· 标题字体：得意黑 Smiley Sans</div>
+  <div>仅供学习娱乐 · 接口限流请勿高频调用</div>
+</footer>
+
+<script src="common.js"></script>
+<script src="toolbox.js"></script>
+</body>
+</html>

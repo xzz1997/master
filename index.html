@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>摸鱼快乐屋 · 首页</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<div class="aurora"><div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div></div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="logo">🎣 摸鱼快乐屋</div>
+    <div class="nav-links">
+      <a href="index.html" class="active">🏠 首页</a>
+      <a href="toolbox.html">🧰 工具箱</a>
+      <a href="#news">每日60秒</a>
+      <a href="#rank">热搜榜单</a>
+      <a href="#ent">娱乐百宝箱</a>
+    </div>
+    <div class="nav-right">
+      <span class="badge">LIVE · 60s API</span>
+      <span class="clock" id="clock">--:--:--</span>
+      <button class="theme-btn" id="themeBtn" title="切换主题">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="floaties"><span class="floaty f1">🎈</span><span class="floaty f2">🌈</span><span class="floaty f3">🐟</span><span class="floaty f4">☕</span></div>
+    <h1>打工人快乐基地</h1>
+    <p>聚合「60秒读懂世界」资讯 · 全平台热搜榜单 · 摸鱼进度 · 随机娱乐，每天打开一次，快乐一整天。数据实时来自开源免费的 60s API。</p>
+    <div class="hero-stats" id="heroStats">
+      <span class="chip">📅 <b id="hsDate">--</b></span>
+      <span class="chip">🌙 <b id="hsLunar">--</b></span>
+      <span class="chip">⏳ <b id="hsCountdown">--</b></span>
+    </div>
+  </header>
+
+  <section id="dash">
+    <div class="sec-head">
+      <h2 class="sec-title">今日摸鱼日报</h2>
+      <span class="sec-sub">公历 · 农历 · 假期 · 进度 · 倒计时</span>
+      <span class="sec-line"></span>
+    </div>
+    <div class="dash" id="dashBoard">
+      <div class="card">
+        <div class="date-big skel" style="height:44px;width:55%"></div>
+        <div class="date-lunar skel" style="height:20px;width:70%;margin-top:14px"></div>
+        <div class="progress">
+          <div class="prow"><span class="pname">本周</span><div class="pbar"><div class="pfill"></div></div><span class="pval">--</span></div>
+          <div class="prow"><span class="pname">本月</span><div class="pbar"><div class="pfill"></div></div><span class="pval">--</span></div>
+          <div class="prow"><span class="pname">今年</span><div class="pbar"><div class="pfill"></div></div><span class="pval">--</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="count-grid" id="countGrid">
+          <div class="count-item"><span class="count-label skel" style="height:14px;width:60%"></span><span class="count-num skel" style="height:24px;width:40%"></span></div>
+          <div class="count-item"><span class="count-label skel" style="height:14px;width:60%"></span><span class="count-num skel" style="height:24px;width:40%"></span></div>
+          <div class="count-item"><span class="count-label skel" style="height:14px;width:60%"></span><span class="count-num skel" style="height:24px;width:40%"></span></div>
+          <div class="count-item"><span class="count-label skel" style="height:14px;width:60%"></span><span class="count-num skel" style="height:24px;width:40%"></span></div>
+        </div>
+        <div class="quote skel" style="height:60px;margin-top:18px"></div>
+      </div>
+    </div>
+    <div class="ticker">
+      <div class="ticker-inner">
+        <span class="ticker-label">📰 今日要闻</span>
+        <div class="ticker-track"><span id="tickerText">加载中…</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="news">
+    <div class="sec-head">
+      <h2 class="sec-title">每天 60 秒读懂世界</h2>
+      <span class="sec-sub">15 条新闻速览 · 附带原图与语音</span>
+      <span class="sec-line"></span>
+      <button class="btn ghost" onclick="loadNews(true)">🔄 刷新</button>
+    </div>
+    <div class="news-grid" id="newsGrid"></div>
+    <div class="tip-box" id="tipBox" style="display:none"></div>
+  </section>
+
+  <section id="wallpaper">
+    <div class="sec-head">
+      <h2 class="sec-title">今日壁纸</h2>
+      <span class="sec-sub">必应每日精选 · 支持 4K</span>
+      <span class="sec-line"></span>
+      <button class="btn ghost" onclick="loadWallpaper(true)">🔄 刷新</button>
+    </div>
+    <div class="card wallpaper-card" id="wpCard">
+      <img class="wp-img skel" id="wpImg" alt="wallpaper">
+      <div class="wp-info">
+        <div class="wp-title skel" id="wpTitle" style="width:200px;height:20px"></div>
+        <div class="wp-copy skel" id="wpCopy" style="width:280px;height:16px"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="rank">
+    <div class="sec-head">
+      <h2 class="sec-title">🔥 全网热搜榜单</h2>
+      <span class="sec-sub">微博 · B站 · 知乎 · 抖音 · 百度 · 小红书 · 网易云</span>
+      <span class="sec-line"></span>
+    </div>
+    <div class="tabs" id="rankTabs"></div>
+    <div id="rankSubTabs"></div>
+    <div class="rank-list" id="rankList"></div>
+  </section>
+
+  <section id="ent">
+    <div class="sec-head">
+      <h2 class="sec-title">🎮 娱乐百宝箱</h2>
+      <span class="sec-sub">点击卡片即可换一条 · 快乐无限量</span>
+      <span class="sec-line"></span>
+    </div>
+    <div class="ent-grid" id="entGrid"></div>
+  </section>
+
+
+</div>
+
+<!-- 开屏欢迎弹窗：每日运势 + 一言 -->
+<div class="welcome-overlay" id="welcomeOverlay">
+  <div class="welcome-card" id="welcomeCard">
+    <div class="welcome-deco"><span class="wd1">🎈</span><span class="wd2">🌈</span><span class="wd3">🐟</span></div>
+    <div class="welcome-badge">今日已就绪</div>
+    <h2 class="welcome-title">欢迎来到摸鱼快乐屋</h2>
+    <p class="welcome-sub">先看看今天的运势和一句话，再开始快乐摸鱼吧</p>
+    <div class="welcome-fortune">
+      <div class="wf-label">🍀 今日运势</div>
+      <div class="wf-level" id="wfLevel"><span class="skel" style="display:inline-block;height:26px;width:90px"></span></div>
+      <div class="wf-msg" id="wfMsg"><span class="skel" style="display:inline-block;height:16px;width:100%"></span></div>
+    </div>
+    <div class="welcome-hitokoto">
+      <div class="wh-label">💬 今日一言</div>
+      <div class="wh-text" id="whText"><span class="skel" style="display:inline-block;height:16px;width:100%"></span></div>
+    </div>
+    <div class="welcome-actions">
+      <button class="btn ghost" id="welcomeReroll">🎲 换一条</button>
+      <button class="btn" id="welcomeStart">开始摸鱼 →</button>
+    </div>
+  </div>
+</div>
+
+<button class="music-fab" id="musicFab" title="网易云音乐">🎵</button>
+<div class="music-panel" id="musicPanel">
+  <div class="music-title">🎵 摸鱼 BGM</div>
+  <div class="music-sub">网易云外链播放器 · 点击歌曲即播放</div>
+  <iframe class="music-frame" src="about:blank" allow="autoplay"></iframe>
+  <div class="music-list"></div>
+</div>
+
+<button class="to-top" id="toTop" title="回到顶部">↑</button>
+
+<footer>
+  <div>🎣 摸鱼快乐屋 · 娱乐内容聚合站</div>
+  <div>数据来源：<a href="https://60s.viki.moe" target="_blank" rel="noopener">60s API</a>（免费开源 · <a href="https://github.com/vikiboss/60s" target="_blank" rel="noopener">GitHub</a>）· 标题字体：得意黑 Smiley Sans</div>
+  <div>仅供学习娱乐 · 接口限流请勿高频调用</div>
+</footer>
+
+<script src="common.js"></script>
+<script src="index.js"></script>
+</body>
+</html>
