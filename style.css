@@ -17,12 +17,11 @@ html{scroll-behavior:smooth}
 body{font-family:"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;transition:background .4s,color .4s;-webkit-font-smoothing:antialiased}
 /* 极光背景 */
 .aurora{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
-.blob{position:absolute;border-radius:50%;filter:blur(100px);opacity:.4;animation:float 22s ease-in-out infinite alternate}
+.blob{position:absolute;border-radius:50%;filter:blur(55px);opacity:.4}
 .blob-1{width:55vw;height:55vw;background:#7c5cff;top:-22vw;left:-16vw}
 .blob-2{width:44vw;height:44vw;background:#ff6ec7;bottom:-16vw;right:-12vw;animation-delay:-7s}
 .blob-3{width:28vw;height:28vw;background:#ffd166;top:36%;left:58%;opacity:.22;animation-delay:-13s}
 html[data-theme="light"] .blob{opacity:.22}
-@keyframes float{from{transform:translate(0,0) scale(1)}to{transform:translate(7vw,5vh) scale(1.15)}}
 /* 导航 */
 .nav{position:sticky;top:0;z-index:60;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);background:color-mix(in srgb,var(--bg) 66%,transparent);border-bottom:1px solid var(--border)}
 .nav-inner{max-width:1200px;margin:auto;display:flex;align-items:center;gap:20px;padding:13px 24px;flex-wrap:wrap}
@@ -51,7 +50,7 @@ section{margin:72px 0;scroll-margin-top:90px}
 .chip b{color:var(--text)}
 /* 摸鱼仪表盘 */
 .dash{display:grid;grid-template-columns:1.15fr .85fr;gap:22px;margin-top:34px;text-align:left}
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:var(--shadow);transition:transform .3s,border-color .3s,background .3s;position:relative;overflow:hidden}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);transition:transform .3s,border-color .3s,background .3s;position:relative;overflow:hidden}
 .card:hover{transform:translateY(-5px);border-color:color-mix(in srgb,var(--accent) 45%,var(--border))}
 .card::before{content:"";position:absolute;inset:0;border-radius:var(--radius);background:linear-gradient(120deg,transparent 40%,rgba(255,255,255,.05) 50%,transparent 60%);opacity:0;transition:.5s;pointer-events:none}
 .card:hover::before{opacity:1}
@@ -75,7 +74,7 @@ section{margin:72px 0;scroll-margin-top:90px}
 .quote{margin-top:20px;padding:16px 18px;border-radius:16px;background:linear-gradient(120deg,color-mix(in srgb,var(--accent) 14%,transparent),color-mix(in srgb,var(--accent-2) 12%,transparent));border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);font-size:15px;line-height:1.8;color:var(--text)}
 .quote::before{content:"💬 "}
 /* 跑马灯 */
-.ticker{margin-top:26px;border:1px solid var(--border);background:var(--card);border-radius:16px;overflow:hidden;backdrop-filter:blur(12px)}
+.ticker{margin-top:26px;border:1px solid var(--border);background:var(--card);border-radius:16px;overflow:hidden}
 .ticker-inner{display:flex;align-items:center;gap:14px;padding:11px 18px}
 .ticker-label{flex-shrink:0;font-size:12px;font-weight:800;color:#0a0e1a;background:var(--grad);padding:5px 12px;border-radius:999px}
 .ticker-track{flex:1;overflow:hidden;white-space:nowrap}

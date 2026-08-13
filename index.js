@@ -76,7 +76,7 @@ async function loadWallpaper(force) {
   catch { d = { title: '今日壁纸（示例）', headline: '数据源不可用时显示示例占位图', copyright: '© 60s API' }; }
   t.textContent = d.title || d.headline || '';
   c.textContent = d.copyright || '';
-  const src = d.cover_4k || d.cover || d.image || '';
+  const src = d.cover || d.image || d.cover_4k || '';
   if (src) {
     const probe = new Image();
     probe.onload = () => { img.src = src; img.className = 'wp-img'; };
@@ -208,7 +208,7 @@ function initEnt() {
     </div>`).join('');
   grid.querySelectorAll('[data-act]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); loadEnt(b.dataset.act, true); }));
   grid.querySelectorAll('[data-play]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); playChangya(); }));
-  ENT_CARDS.slice(0, 4).forEach(c => loadEnt(c.id));
+  ENT_CARDS.slice(0, 2).forEach(c => loadEnt(c.id));
   const io = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) { const id = x.target.dataset.id; if (!entState[id] && !entLoading[id]) loadEnt(id); io.unobserve(x.target); } }), { rootMargin: '120px' });
   ENT_CARDS.slice(4).forEach(c => io.observe(document.querySelector('[data-id="' + c.id + '"]')));
 }

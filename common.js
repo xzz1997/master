@@ -1,5 +1,22 @@
 /* ============ 60s 娱乐站 · 公共层：API + 工具 + 音乐 ============ */
 const API_BASE = 'https://60s.viki.moe/v2';
+let ACTIVE_BASE = null;   // 探测后选出的最快基址
+const memRandom = {};     // 随机接口会话内去重（弹窗与卡片共用一言等）
+const inflight = {};      // 同路径请求中合并（并发只发一次）
+function getActiveBase() { return ACTIVE_BASE || API_BASE; }
+async function probeBases() {
+  try { const c = localStorage.getItem('60s_api_base'); if (c) { ACTIVE_BASE = c; return; } } catch {}
+  const bases = [API_BASE, ...MIRRORS];
+  const results = await Promise.allSettled(bases.map(b => {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 2000);
+    return fetch(b + '/60s', { signal: ctrl.signal, headers: { 'Accept': 'application/json' } })
+      .then(r => { clearTimeout(timer); if (!r.ok) throw new Error('bad'); return b; })
+      .catch(e => { clearTimeout(timer); throw e; });
+  }));
+  const ok = bases.filter((b, i) => results[i].status === 'fulfilled');
+  if (ok.length) { ACTIVE_BASE = ok[0]; try { localStorage.setItem('60s_api_base', ACTIVE_BASE); } catch {} }
+}
 const MIRRORS = ['https://60s-api.viki.moe/v2', 'https://60s.crystelf.top/v2', 'https://60s.7se.cn/v2'];
 const TTL = { '60s': 30 * 60 * 1000, 'moyu': 30 * 60 * 1000, 'bing': 6 * 60 * 60 * 1000, 'history': 6 * 60 * 60 * 1000, 'rank': 10 * 60 * 1000, 'tool': 20 * 60 * 1000, 'random': 0 };
 let rateLimited = false;
@@ -38,26 +55,39 @@ async function fetchJSON(url, timeout = 8000) {
   } finally { clearTimeout(timer); }
 }
 
-async function api(path, { ttl = '60s', force = false, timeout = 6000, queued = true } = {}) {
+async function api(path, { ttl = '60s', force = false, timeout = 4000, queued = true } = {}) {
   if (!force) { const c = getCache(ttl); if (c) return c; }
+  const isRand = ttl === 'random';
+  if (!force && isRand && memRandom[path]) return memRandom[path];
+  if (!force && isRand && inflight[path]) return inflight[path];
   if (rateLimited) throw new Error('rate limited');
-  const bases = [API_BASE, ...MIRRORS.slice(0, 1)];
-  let lastErr = null;
-  for (let i = 0; i < bases.length; i++) {
-    const attempt = async () => {
-      await sleep(i === 0 ? 0 : 200);
-      if (rateLimited) throw new Error('rate limited');
-      const t0 = Date.now();
-      try { return await fetchJSON(bases[i] + path, timeout); }
-      catch (e) { if (Date.now() - t0 < 1200) rateLimited = true; throw e; }
-    };
-    try {
-      const data = queued ? await enqueue(attempt) : await attempt();
-      if (ttl && TTL[ttl]) setCache(ttl, data);
-      return data;
-    } catch (e) { lastErr = e; if (rateLimited) break; }
+  const ab = getActiveBase();
+  const bases = [ab, ...MIRRORS.filter(m => m !== ab).slice(0, 1)];
+  const run = async () => {
+    let lastErr = null;
+    for (let i = 0; i < bases.length; i++) {
+      const attempt = async () => {
+        await sleep(i === 0 ? 0 : 200);
+        if (rateLimited) throw new Error('rate limited');
+        const t0 = Date.now();
+        try { return await fetchJSON(bases[i] + path, timeout); }
+        catch (e) { if (Date.now() - t0 < 1200) rateLimited = true; throw e; }
+      };
+      try {
+        const data = queued ? await enqueue(attempt) : await attempt();
+        if (ttl && TTL[ttl]) setCache(ttl, data);
+        if (isRand) memRandom[path] = data;
+        return data;
+      } catch (e) { lastErr = e; if (rateLimited) break; }
+    }
+    throw lastErr || new Error('fetch failed');
+  };
+  if (!force && isRand) {
+    const p = inflight[path] = run();
+    p.finally(() => { if (inflight[path] === p) delete inflight[path]; }).catch(() => {});
+    return p;
   }
-  throw lastErr || new Error('fetch failed');
+  return run();
 }
 
 /* ---- 通用工具 ---- */
@@ -186,6 +216,8 @@ function initWelcome() {
 }
 
 /* ---- 示例数据（接口限流/不可用时降级） ---- */
+probeBases(); // 启动时并行探测最快基址（不阻塞渲染）
+
 const SAMPLE = {
   moyu: { date: { gregorian: '2026-08-13', weekday: '星期四', lunar: { yearCN: '二零二六', monthCN: '七月', dayCN: '初一', yearGanZhi: '丙午', monthGanZhi: '丙申', dayGanZhi: '己未', zodiac: '马' } }, today: { isWorkday: true, isWeekend: false, isHoliday: false, holidayName: null }, progress: { week: { passed: 4, total: 7, remaining: 3, percentage: 57 }, month: { passed: 13, total: 31, remaining: 18, percentage: 42 }, year: { passed: 225, total: 365, remaining: 140, percentage: 62 } }, nextHoliday: { name: '中秋', date: '2026-09-25', until: 43, duration: 3 }, nextWeekend: { date: '2026-08-15', weekday: '星期六', daysUntil: 2 }, countdown: { toWeekEnd: 2, toFriday: 1, toMonthEnd: 18, toYearEnd: 140 }, moyuQuote: '我的座右铭：能坐着绝不站着，能躺着绝不坐着，能摸鱼绝不工作。' },
   news: { date: '2026-08-13', news: ['今年上半年全国结婚登记 327.5 万对，较去年同期减少 26.4 万对；离婚登记 138.3 万对，较去年同期增加 5.2 万对','银行能办结婚证了：天津首家银行内结婚登记点启用，领证还能定制银行卡','31 省上半年财政收入出炉：广东以 7421 亿元连续 35 年蝉联榜首','中汽协：7 月新能源汽车新车销量占比首超 60%','我国成功攻克锂云母提锂多项重大技术难题','我国主导的国际学术期刊《Vita》纸质刊首期发布','苏州：新就业群体台风中受伤最高可获 10000 元救助','美国撤销联邦政府设备使用 TikTok 禁令','世界气象组织：今年全球 7 月气温为有记录以来第二高','澳大利亚给外卖员定最低工资','NBA 洛杉矶湖人队被 125 亿美元出售','美国 7 月 CPI 同比涨幅回落至 3.4%','特朗普宣称完全控制霍尔木兹海峡','日本东京股市日经指数收盘上涨 0.8%','某地发布高温橙色预警'], tip: '不必害怕起步太晚，停下观望才是对时光最大的辜负' },

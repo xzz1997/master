@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>摸鱼快乐屋 · 首页</title>
+<link rel="preload" href="fonts/smiley-sans.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -94,7 +95,7 @@
       <button class="btn ghost" onclick="loadWallpaper(true)">🔄 刷新</button>
     </div>
     <div class="card wallpaper-card" id="wpCard">
-      <img class="wp-img skel" id="wpImg" alt="wallpaper">
+      <img class="wp-img skel" id="wpImg" alt="wallpaper" loading="lazy" decoding="async">
       <div class="wp-info">
         <div class="wp-title skel" id="wpTitle" style="width:200px;height:20px"></div>
         <div class="wp-copy skel" id="wpCopy" style="width:280px;height:16px"></div>
