@@ -193,6 +193,11 @@ function initMusic() {
 function initWelcome() {
   const overlay = document.getElementById('welcomeOverlay');
   if (!overlay) return;
+  // 每天只弹一次：当天已弹过则不再弹出（含页面切换/刷新）
+  const now = new Date();
+  const todayKey = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+  try { if (localStorage.getItem('60s_welcome_date') === todayKey) return; } catch {}
+  const markShown = () => { try { localStorage.setItem('60s_welcome_date', todayKey); } catch {} };
   const render = async (force) => {
     let luck, hitokoto;
     try { luck = await api('/luck', { ttl: 'random', force, queued: false }); } catch { luck = SAMPLE.luck; }
@@ -204,10 +209,11 @@ function initWelcome() {
     document.getElementById('whText').textContent = hitokoto.hitokoto || hitokoto.text || hitokoto.content || '…';
   };
   const close = () => {
+    markShown();
     overlay.classList.remove('show');
     setTimeout(() => overlay.remove(), 600);
   };
-  setTimeout(() => { overlay.classList.add('show'); render(); }, 500);
+  setTimeout(() => { overlay.classList.add('show'); markShown(); render(); }, 500);
   const reroll = document.getElementById('welcomeReroll');
   const start = document.getElementById('welcomeStart');
   if (reroll) reroll.addEventListener('click', () => render(true));
